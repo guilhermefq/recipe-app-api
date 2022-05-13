@@ -6,30 +6,22 @@ services:
       context: .
     ports:
       - "8000:8000"
+    env_file:
+      - ./.env.dev
     volumes:
       - ./app:/app
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASS=postgres
-      - DB_NAME=app
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
+    restart: always
 
   db:
     image: postgres:14.2-alpine
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./db:/var/lib/postgresql/data
+    user: postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=app
-    restart: always
-    command: >
-      sh -c "postgres -D /var/lib/postgresql/data"
-

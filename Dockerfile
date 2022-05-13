@@ -2,6 +2,7 @@ FROM python:3.10.4-alpine
 MAINTAINER Softgran
 
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
 
 RUN pip install --upgrade pip
 
